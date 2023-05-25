@@ -18,7 +18,7 @@ class TelegramAccounts(Base):
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     username: Mapped[str] = mapped_column(nullable=False)
     tg_first_name: Mapped[str] = mapped_column(nullable=False)
-    tg_second_name: Mapped[str] = mapped_column(default='')
+    tg_second_name: Mapped[str] = mapped_column(nullable=True)
     active: Mapped[bool] = mapped_column(nullable=False)
 
     manga_accounts: Mapped[list[MangaAccounts]] = relationship(secondary='tg_mg_accounts_assoc',
