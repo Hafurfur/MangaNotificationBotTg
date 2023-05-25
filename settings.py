@@ -7,6 +7,7 @@ _dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(_dotenv_path)
 
 # Database
+DB_TYPE = os.environ.get('DB_TYPE')
 DB_NAME = os.environ.get('DB_NAME')
 DB_HOST = os.environ.get('DB_HOST')
 DB_PORT = os.environ.get('DB_PORT')
