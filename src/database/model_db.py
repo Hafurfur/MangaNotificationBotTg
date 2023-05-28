@@ -13,12 +13,13 @@ class Base(DeclarativeBase):
 class TelegramAccounts(Base):
     __tablename__ = 'telegram_accounts'
 
-    account_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    account_id: Mapped[int] = mapped_column(unique=True, nullable=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     username: Mapped[str] = mapped_column(nullable=False)
-    tg_first_name: Mapped[str] = mapped_column(nullable=False)
-    tg_second_name: Mapped[str] = mapped_column(nullable=True)
+    first_name: Mapped[str] = mapped_column(nullable=False)
+    second_name: Mapped[str] = mapped_column(nullable=True)
     active: Mapped[bool] = mapped_column(nullable=False)
 
     manga_accounts: Mapped[list[MangaAccounts]] = relationship(secondary='tg_mg_accounts_assoc',
@@ -27,9 +28,9 @@ class TelegramAccounts(Base):
 
 class TgMgAccountsAssociationTable(Base):
     __tablename__ = 'tg_mg_accounts_assoc'
-    tg_acc_id: Mapped[int] = mapped_column(ForeignKey('telegram_accounts.account_id'), primary_key=True,
+    tg_acc_id: Mapped[int] = mapped_column(ForeignKey('telegram_accounts.id'), primary_key=True,
                                            autoincrement=False)
-    mg_acc_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.account_id'), primary_key=True,
+    mg_acc_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.id'), primary_key=True,
                                            autoincrement=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
@@ -37,7 +38,8 @@ class TgMgAccountsAssociationTable(Base):
 
 class MangaAccounts(Base):
     __tablename__ = 'manga_accounts'
-    account_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    account_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     username: Mapped[str] = mapped_column(nullable=False)
@@ -51,9 +53,9 @@ class MangaAccounts(Base):
 
 class MgAccountTrackedMgAssociationTable(Base):
     __tablename__ = 'mg_acc_tr_mg_assoc'
-    mg_acc_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.account_id'), primary_key=True,
+    mg_acc_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.id'), primary_key=True,
                                            autoincrement=False)
-    tracked_mg_id: Mapped[int] = mapped_column(ForeignKey('tracked_manga.manga_id'), primary_key=True,
+    tracked_mg_id: Mapped[int] = mapped_column(ForeignKey('tracked_manga.id'), primary_key=True,
                                                autoincrement=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
@@ -61,10 +63,11 @@ class MgAccountTrackedMgAssociationTable(Base):
 
 class TrackedManga(Base):
     __tablename__ = 'tracked_manga'
-    manga_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    manga_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    slug: Mapped[str] = mapped_column(unique=True)
+    slug: Mapped[str] = mapped_column(nullable=False)
     name_rus: Mapped[str] = mapped_column(nullable=False)
     cover_url: Mapped[str] = mapped_column(nullable=False)
 
