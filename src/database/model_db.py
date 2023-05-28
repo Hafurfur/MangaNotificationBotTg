@@ -14,7 +14,7 @@ class TelegramAccounts(Base):
     __tablename__ = 'telegram_accounts'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    account_id: Mapped[int] = mapped_column(unique=True, nullable=False)
+    account_id: Mapped[str] = mapped_column(unique=True, nullable=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     username: Mapped[str] = mapped_column(nullable=False)
@@ -24,6 +24,11 @@ class TelegramAccounts(Base):
 
     manga_accounts: Mapped[list[MangaAccounts]] = relationship(secondary='tg_mg_accounts_assoc',
                                                                back_populates='telegram_accounts')
+
+    def __repr__(self):
+        return f'TelegramAccounts(id={self.id}, account_id={self.account_id}, create_date={self.create_date}, ' \
+               f'update_date={self.update_date}, username={self.username}, first_name={self.first_name}, ' \
+               f'second_name={self.second_name}, active={self.active})'
 
 
 class TgMgAccountsAssociationTable(Base):
@@ -39,7 +44,7 @@ class TgMgAccountsAssociationTable(Base):
 class MangaAccounts(Base):
     __tablename__ = 'manga_accounts'
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    account_id: Mapped[int] = mapped_column(nullable=False, unique=True)
+    account_id: Mapped[str] = mapped_column(nullable=False, unique=True)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     username: Mapped[str] = mapped_column(nullable=False)
@@ -49,6 +54,10 @@ class MangaAccounts(Base):
                                                                      back_populates='manga_accounts')
     tracked_manga: Mapped[list[TrackedManga]] = relationship(secondary='mg_acc_tr_mg_assoc',
                                                              back_populates='manga_accounts')
+
+    def __repr__(self):
+        return f'MangaAccounts(id={self.id}, account_id={self.account_id}, create_date={self.create_date}, ' \
+               f'update_date={self.update_date}, username={self.username}, active={self.active})'
 
 
 class MgAccountTrackedMgAssociationTable(Base):
@@ -64,7 +73,7 @@ class MgAccountTrackedMgAssociationTable(Base):
 class TrackedManga(Base):
     __tablename__ = 'tracked_manga'
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    manga_id: Mapped[int] = mapped_column(nullable=False, unique=True)
+    manga_id: Mapped[str] = mapped_column(nullable=False, unique=True)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     slug: Mapped[str] = mapped_column(nullable=False)
@@ -73,6 +82,10 @@ class TrackedManga(Base):
 
     manga_accounts: Mapped[list[MangaAccounts]] = relationship(secondary='mg_acc_tr_mg_assoc',
                                                                back_populates='tracked_manga')
+
+    def __repr__(self):
+        return f'TrackedManga(id={self.id}, manga_id={self.manga_id}, create_date={self.create_date}, ' \
+               f'update_date={self.update_date}, slug={self.slug}, name_rus={self.name_rus}, cover_url={self.cover_url})'
 
 
 if __name__ == '__main__':
