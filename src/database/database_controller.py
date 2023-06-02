@@ -6,14 +6,14 @@ from sqlalchemy import URL, create_engine, text
 
 class DatabaseController:
     _engine = None
+    _instance = None
 
     def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls, *args, **kwargs)
-        if instance._engine is None:
-            _db_url = URL.create(DB_TYPE, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
-            instance._engine = create_engine(_db_url, echo=True)
-        return instance
-
+        if cls._instance is None:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+            db_url = URL.create(DB_TYPE, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+            cls._instance._engine = create_engine(db_url, echo=True)
+        return cls._instance
 
     @staticmethod
     def create_db():
