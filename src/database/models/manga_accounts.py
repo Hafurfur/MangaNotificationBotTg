@@ -12,10 +12,10 @@ if TYPE_CHECKING:
 
 class MangaAccounts(Base):
     __tablename__ = 'manga_accounts'
+
+    account_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    account_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     username: Mapped[str] = mapped_column(nullable=False)
     active: Mapped[bool] = mapped_column(nullable=False)
 
@@ -27,5 +27,5 @@ class MangaAccounts(Base):
         return self
 
     def __str__(self):
-        return f'MangaAccounts(id={self.id}, account_id={self.account_id}, create_date={self.create_date}, ' \
+        return f'MangaAccounts(account_id={self.account_id}, create_date={self.create_date}, ' \
                f'update_date={self.update_date}, username={self.username}, active={self.active})'

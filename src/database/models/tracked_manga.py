@@ -11,10 +11,10 @@ if TYPE_CHECKING:
 
 class TrackedManga(Base):
     __tablename__ = 'tracked_manga'
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    manga_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    manga_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     slug: Mapped[str] = mapped_column(nullable=False)
     name_rus: Mapped[str] = mapped_column(nullable=False)
     cover_url: Mapped[str] = mapped_column(nullable=False)
@@ -25,5 +25,5 @@ class TrackedManga(Base):
         return self
 
     def __str__(self):
-        return f'TrackedManga(id={self.id}, manga_id={self.manga_id}, create_date={self.create_date}, ' \
+        return f'TrackedManga(manga_id={self.manga_id}, create_date={self.create_date}, ' \
                f'update_date={self.update_date}, slug={self.slug}, name_rus={self.name_rus}, cover_url={self.cover_url})'

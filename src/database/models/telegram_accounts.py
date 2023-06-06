@@ -12,11 +12,10 @@ if TYPE_CHECKING:
 class TelegramAccounts(Base):
     __tablename__ = 'telegram_accounts'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    account_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    account_id: Mapped[int] = mapped_column(unique=True, nullable=False)
-    manga_account_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.id'), nullable=True, server_default=None)
+    manga_account_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.account_id'), nullable=True)
     username: Mapped[str] = mapped_column(nullable=False)
     first_name: Mapped[str] = mapped_column(nullable=False)
     second_name: Mapped[str] = mapped_column(nullable=True, server_default=None)
@@ -28,6 +27,6 @@ class TelegramAccounts(Base):
         return self
 
     def __str__(self):
-        return f'TelegramAccounts(id={self.id}, account_id={self.account_id}, create_date={self.create_date}, ' \
-               f'update_date={self.update_date}, username={self.username}, first_name={self.first_name}, ' \
-               f'second_name={self.second_name}, active={self.active})'
+        return f'TelegramAccounts(account_id={self.account_id}, create_date={self.create_date}, ' \
+               f'update_date={self.update_date}, manga_account_id={self.manga_account_id}, username={self.username}, ' \
+               f'first_name={self.first_name}, second_name={self.second_name}, active={self.active})'
