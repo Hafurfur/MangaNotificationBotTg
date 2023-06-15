@@ -1,5 +1,5 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
-from datetime import datetime
 from .base import Base
 
 from sqlalchemy import ForeignKey, DateTime, func
@@ -13,15 +13,15 @@ class TelegramAccounts(Base):
     __tablename__ = 'telegram_accounts'
 
     account_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
-    create_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    update_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    create_date: Mapped[DateTime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    update_date: Mapped[DateTime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
     manga_account_id: Mapped[int] = mapped_column(ForeignKey('manga_accounts.account_id'), nullable=True)
-    username: Mapped[str] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(nullable=True)
     first_name: Mapped[str] = mapped_column(nullable=False)
-    second_name: Mapped[str] = mapped_column(nullable=True, server_default=None)
+    second_name: Mapped[str] = mapped_column(nullable=True)
     active: Mapped[bool] = mapped_column(nullable=False)
 
-    manga_account: Mapped['MangaAccounts'] = relationship(back_populates='telegram_accounts')
+    manga_account: Mapped[MangaAccounts] = relationship(back_populates='telegram_accounts')
 
     def __repr__(self):
         return self
