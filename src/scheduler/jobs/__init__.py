@@ -1,0 +1,2 @@
+from .send_notif_new_chapters_job import send_notif_new_chapters
+from .upd_readable_mg_job import udp_readable_mg
