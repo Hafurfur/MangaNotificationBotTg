@@ -76,7 +76,7 @@ def get_readable_mg_acc(account_id: int) -> tuple[list, set, int]:
     log.debug(f'{__name__} account_id={account_id}')
 
     try:
-        response = get(f'http://mangalib.me/bookmar1k/{account_id}')
+        response = get(f'http://mangalib.me/bookmark/{account_id}')
         response.raise_for_status()
     except (HTTPError, ConnectionError, Timeout, RequestException) as error:
         log.error('Ошибка при получении читаемой манги аккаунта с сайта (requests)', exc_info=error)
