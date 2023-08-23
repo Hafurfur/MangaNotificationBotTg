@@ -1,3 +1,0 @@
-from search_manga import get_readable_mg_acc
-from search_mg_account import get_photo_account
-from search_mg_account import search_account
