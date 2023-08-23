@@ -23,9 +23,6 @@ class TelegramAccounts(Base):
 
     manga_account: Mapped[MangaAccounts] = relationship(back_populates='telegram_accounts')
 
-    def __repr__(self):
-        return self
-
     def __str__(self):
         return f'TelegramAccounts(account_id={self.account_id}, create_date={self.create_date}, ' \
                f'update_date={self.update_date}, manga_account_id={self.manga_account_id}, username={self.username}, ' \

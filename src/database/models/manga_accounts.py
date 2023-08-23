@@ -23,9 +23,6 @@ class MangaAccounts(Base):
     readable_manga: Mapped[list[TrackedManga]] = relationship(secondary='mg_acc_tr_mg_assoc',
                                                               back_populates='manga_accounts')
 
-    def __repr__(self):
-        return self
-
     def __str__(self):
         return f'MangaAccounts(account_id={self.account_id}, create_date={self.create_date}, ' \
                f'update_date={self.update_date}, username={self.username}, active={self.active})'
