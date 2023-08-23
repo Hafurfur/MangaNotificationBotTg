@@ -48,11 +48,12 @@ def _get_send_data(manga_slug: str) -> list[dict]:
     return result
 
 
-def _get_cover_data(manga_slug: str, send_data: str) -> bytes:
-    log.debug(f'{__name__} получение обложки манги manga_slug={manga_slug}, send_data={send_data}')
+def _get_cover_data(manga_slug: str, cover_id: str) -> bytes:
+    log.debug(f'{__name__} получение обложки манги manga_slug={manga_slug}, send_data={cover_id}')
 
     try:
-        response = get(f'https://cover.imglib.info/uploads/cover/{manga_slug}/cover/{send_data[0][1]}_250x350.jpg')
+        response = get(f'https://cover.imglib.info/uploads/cover/{manga_slug}/cover/{cover_id}_250x350.jpg')
+        response.raise_for_status()
     except (HTTPError, ConnectionError, Timeout, RequestException) as error:
         log.error('Ошибка при получении обложки манги (requests)', exc_info=error)
         return _get_placeholder_cover()
