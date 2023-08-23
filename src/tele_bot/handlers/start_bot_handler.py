@@ -1,11 +1,15 @@
-from src.database import save_telegram_account
-from src.tele_bot.bot_controller import bot
+from src.tele_bot.bot_back.save_tg_acc import save_telegram_account
+from loader import bot
+from src.logger.base_logger import log
 
 from telebot.types import Message
 
 
 @bot.message_handler(commands=['start'])
 def start_bot_on_client(message: Message):
+    log.info('Старт обработчика команды "start"')
+    log.debug(f'{__name__}(message.from_user.id={message.from_user.id})')
+
     save_telegram_account(message.from_user.id, message.from_user.username,
                           message.from_user.first_name, message.from_user.last_name)
     bot.send_message(message.chat.id, f'Добро пожаловать {message.from_user.first_name}!\nС этого момента бот сможет '
