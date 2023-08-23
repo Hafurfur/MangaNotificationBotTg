@@ -14,8 +14,9 @@ class SqliteDB:
     def __init__(self, db_name: str, db_dir='./db/'):
         log.debug(f'Создание экземпляра объекта {self.__class__.__name__}')
         log.debug(f'db_name={db_name}, db_dir={db_dir}')
-        self.db_name = db_name
         self.db_dir = db_dir
+        if db_name is None:
+            self.db_name = 'bot_db.db'
         self._make_db_dir()
 
     def get_engine(self) -> Engine:
