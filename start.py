@@ -1,10 +1,15 @@
-from src.tele_bot.bot_controller import star_bot
-from src.scheduler.cheduler_controller import start_jobs
+import src.configs.settings
+from loader import scheduler, bot
+import src.tele_bot.handlers
+import src.scheduler
+from src.logger.base_logger import log
 
 
 def run():
-    start_jobs()
-    star_bot()
+    scheduler.start()
+
+    log.info('Старт бота')
+    bot.infinity_polling()
 
 
 if __name__ == '__main__':
