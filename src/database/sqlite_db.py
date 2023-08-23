@@ -15,8 +15,7 @@ class SqliteDB:
         log.debug(f'Создание экземпляра объекта {self.__class__.__name__}')
         log.debug(f'db_name={db_name}, db_dir={db_dir}')
         self.db_dir = db_dir
-        if db_name is None:
-            self.db_name = 'bot_db.db'
+        self.db_name = 'bot_db.db' if db_name is None else db_name
         self._make_db_dir()
 
     def get_engine(self) -> Engine:
