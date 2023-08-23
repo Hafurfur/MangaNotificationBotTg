@@ -9,6 +9,7 @@ def run():
     scheduler.start()
 
     log.info('Старт бота')
+    print('Старт бота')
     bot.infinity_polling()
 
 
