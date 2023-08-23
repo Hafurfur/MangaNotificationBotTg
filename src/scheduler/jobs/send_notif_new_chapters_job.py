@@ -35,9 +35,8 @@ def _get_send_data(manga_slug: str) -> list[dict]:
             stmt = select(TelegramAccounts.account_id, TrackedManga.cover_id).join(
                 MangaAccounts.readable_manga).join(MangaAccounts.telegram_accounts).where(
                 TrackedManga.slug == manga_slug)
-            result_sql = session.execute(stmt).mappings().all()
-
             log.debug(f'Запрос = {stmt}')
+            result = session.execute(stmt).mappings().all()
         except (SQLAlchemyError, DBAPIError) as error:
             log.error('Ошибка при получении телеграмм аккаунтов и id обложки манги из ДБ (SQLAlchemy)', exc_info=error)
             raise
@@ -45,8 +44,8 @@ def _get_send_data(manga_slug: str) -> list[dict]:
             log.error('Ошибка при получении телеграмм аккаунтов и id обложки манги из ДБ', exc_info=error)
             raise
 
-    log.debug(f'Список телеграмм аккаунтов и id обложки result_sql={result_sql}')
-    return result_sql
+    log.debug(f'Список телеграмм аккаунтов и id обложки = {result}')
+    return result
 
 
 def _get_cover_data(manga_slug: str, send_data: str) -> bytes:
