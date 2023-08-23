@@ -1,7 +1,10 @@
 import logging
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
 
 log = logging.getLogger('log')
+
+Path.mkdir(Path(Path.cwd(), './logs/'), exist_ok=True)
 
 rotation_handler = TimedRotatingFileHandler('./logs/log.log', utc=True, when='D')
 stream_handler = logging.StreamHandler()
