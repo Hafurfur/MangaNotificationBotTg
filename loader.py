@@ -5,7 +5,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy.orm import sessionmaker
 from telebot import TeleBot, StatePickleStorage
 
-
 db = DatabaseController(SqliteDB(getenv('SQLITE_DB_NAME')))
 db.create_table()
 Session_db = sessionmaker(bind=db.get_engine())
