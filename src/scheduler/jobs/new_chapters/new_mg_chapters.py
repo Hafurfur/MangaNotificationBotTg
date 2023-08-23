@@ -17,7 +17,7 @@ def get_new_manga_chapters() -> list[Manga]:
     manga_data_db = _get_manga_data_db()
     soup_data = _get_soup_data()
 
-    if manga_data_db or soup_data:
+    if not manga_data_db or not soup_data:
         return []
 
     soup_all_new_releases = soup_data.find_all(class_='updates__item')
