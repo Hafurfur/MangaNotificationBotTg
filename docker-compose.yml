@@ -13,7 +13,7 @@ services:
             target: /app/.state-save
 
           - type: bind
-            source: /home/logs/manga_bot
+            source: #указать папку в которой будут хранится логи
             target: /app/logs
 volumes:
     bot_data:
