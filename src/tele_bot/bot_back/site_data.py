@@ -22,7 +22,6 @@ def get_photo_account(acc_id: str, photo_id: str) -> bytes:
         log.error('Ошибка при получении аватара манга аккаунта', exc_info=error)
         return _get_placeholder_avatar()
 
-    log.debug(f'Аватарка манга аккаунта={response.content}')
     return response.content
 
 

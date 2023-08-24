@@ -62,7 +62,6 @@ def _get_cover_data(manga_slug: str, cover_id: str) -> bytes:
         return _get_placeholder_cover()
 
     result = response.content
-    log.debug(f'Обложка манги={result}')
     return result
 
 
@@ -75,6 +74,8 @@ def _get_placeholder_cover() -> bytes:
 
 def _send_release_in_tg(manga_name: str, chap_vol: int, chap_num: float, chap_url: str, cover: bytes,
                         tg_id: int) -> None:
+    log.debug(f'{__name__} отправка сообщения с новой главой manga_name={manga_name}, chap_vol={chap_vol}, '
+              f'chap_num={chap_num}, chap_url={chap_url}, tg_id={tg_id}')
     try:
         bot.send_photo(tg_id, photo=cover, caption=f'{manga_name}\nТом {chap_vol} глава '
                                                    f'{int(chap_num) if chap_num % 1 == 0 else chap_num}\n\n{chap_url}')
