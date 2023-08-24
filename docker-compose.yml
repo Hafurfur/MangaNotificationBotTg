@@ -1,0 +1,15 @@
+services:
+    manga_bot:
+        build:
+          context: .
+          dockerfile: Dockerfile
+        volumes:
+          - type: volume
+            source: bot_data
+            target: /app/db
+
+          - type: volume
+            source: bot_data
+            target: /app/.state-save
+volumes:
+    bot_data:
