@@ -11,5 +11,9 @@ services:
           - type: volume
             source: bot_data
             target: /app/.state-save
+
+          - type: bind
+            source: /home/logs/manga_bot
+            target: /app/logs
 volumes:
     bot_data:
