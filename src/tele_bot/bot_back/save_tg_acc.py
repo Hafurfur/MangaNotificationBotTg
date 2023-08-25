@@ -8,8 +8,8 @@ from sqlalchemy.dialects.sqlite import insert
 
 
 def save_telegram_account(account_id: int, username: str, first_name: str, second_name: str) -> None:
-    log.debug(f'{__name__}(account_id={account_id}, username={username}, first_name={first_name}, '
-              f'second_name={second_name})')
+    log.info('Сохранение телеграмм аккаунта в БД')
+    log.debug(f'account_id={account_id}, username={username}, first_name={first_name}, second_name={second_name}')
     with Session_db() as session:
         try:
             stmt = insert(TelegramAccounts).values(account_id=account_id, username=username, first_name=first_name,
@@ -18,7 +18,6 @@ def save_telegram_account(account_id: int, username: str, first_name: str, secon
                                               set_=dict(username=username, first_name=first_name,
                                                         second_name=second_name, update_date=func.now()))
             log.debug(f'Запрос = {stmt}')
-
             session.execute(stmt)
             session.commit()
         except (SQLAlchemyError, DBAPIError) as error:

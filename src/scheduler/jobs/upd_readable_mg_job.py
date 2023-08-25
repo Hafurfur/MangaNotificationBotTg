@@ -10,14 +10,13 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 @scheduler.scheduled_job('interval', hours=1)
 def udp_readable_mg() -> None:
     log.info('Старт джобы обновления читаемой манги у манга аккаунтов')
-    log.debug(f'{__name__}')
-
     mg_accounts = _get_mg_acc_db()
 
     for mg_acc in mg_accounts:
         readable_mg_acc_site, readable_mg_id_site, status_code = get_readable_mg_acc(mg_acc)
 
         if status_code != 200:
+            log.debug(f'Ошибка при получении списка манги с сайта | status_code={status_code}')
             continue
 
         all_tracked_mg = _get_tracked_mg_db()
@@ -34,8 +33,9 @@ def udp_readable_mg() -> None:
 
 
 def _save_mew_tracked_mg(manga: list) -> None:
-    log.debug(f'{__name__}, manga={manga} (Сохранение новой отслеживаемой манги в БД)')
+    log.debug(f'Сохранение новой отслеживаемой манги в БД | manga={manga}')
     if not manga:
+        log.debug('Список новой манги пуст')
         return
 
     with Session_db() as session:
@@ -55,6 +55,7 @@ def _del_readable_mg(del_manga: set, mg_acc_id: int) -> None:
         f'{__name__}, del_manga={del_manga}, mg_acc_id={mg_acc_id} (Удаление читаемой манги у манга аккаунта из БД)')
 
     if not del_manga:
+        log.debug('Список удаляемой читаемой манги у аккаунта пуст')
         return
 
     with Session_db() as session:
@@ -75,10 +76,11 @@ def _del_readable_mg(del_manga: set, mg_acc_id: int) -> None:
 
 
 def _sav_new_readable_mg(new_readable_mg: set, mg_acc_id: int) -> None:
-    log.debug(f'{__name__}, new_readable_mg={new_readable_mg}, mg_acc_id={mg_acc_id} '
-              f'(Сохранении новой читаемой манги у манга аккаунта в БД)')
+    log.debug(f'Сохранении новой читаемой манги у манга аккаунта в БД | '
+              f'new_readable_mg={new_readable_mg}, mg_acc_id={mg_acc_id}')
 
     if not new_readable_mg:
+        log.debug('Список новой читаемой манги у аккаунта пуст')
         return
 
     list_rd_mg = [{'mg_acc_id': mg_acc_id, 'tracked_mg_id': mg_id} for mg_id in new_readable_mg]
@@ -98,7 +100,7 @@ def _sav_new_readable_mg(new_readable_mg: set, mg_acc_id: int) -> None:
 
 
 def _create_tracked_mg(data: dict) -> TrackedManga:
-    log.debug(f'{__name__}, data={data} (Создание объектов отслеживаемой манги)')
+    log.debug(f'Создание объектов отслеживаемой манги | data={data}')
 
     last_chapter = data.get('last_chapter') if data.get('last_chapter') else {}
 
@@ -108,7 +110,7 @@ def _create_tracked_mg(data: dict) -> TrackedManga:
 
 
 def _get_mg_acc_db() -> set:
-    log.debug(f'{__name__} (Получение всех манга аккаунтов из ДБ)')
+    log.debug(f'Получение всех манга аккаунтов из ДБ')
     with Session_db() as session:
         try:
             stmt = select(MangaAccounts.account_id)
@@ -121,12 +123,11 @@ def _get_mg_acc_db() -> set:
             log.error('Ошибка при всех манга аккаунтов из ДБ', exc_info=error)
             raise
 
-    log.debug(f'Список всех манга аккаунтов из ДБ = {result}')
     return set(result)
 
 
 def _get_tracked_mg_db() -> set:
-    log.debug(f'{__name__} (Получение всей отслеживаемой манги из ДБ)')
+    log.debug(f'Получение всей отслеживаемой манги из ДБ')
     with Session_db() as session:
         stmt = select(TrackedManga.manga_id)
         result = session.scalars(stmt).all()
@@ -142,12 +143,11 @@ def _get_tracked_mg_db() -> set:
             log.error('Ошибка при получение всей отслеживаемой манги из ДБ', exc_info=error)
             raise
 
-    log.debug(f'Список всей отслеживаемой манги из ДБ = {result}')
     return set(result)
 
 
 def _get_readable_mg_acc_db(mg_acc_id: int) -> set:
-    log.debug(f'{__name__} mg_acc_id={mg_acc_id} (Получение всей читаемой манги у манга аккаунта из ДБ)')
+    log.debug(f'Получение всей читаемой манги у манга аккаунта из ДБ | mg_acc_id={mg_acc_id}')
     with Session_db() as session:
         try:
             stmt = select(TrackedManga.manga_id).join(MangaAccounts.readable_manga).where(
@@ -161,5 +161,4 @@ def _get_readable_mg_acc_db(mg_acc_id: int) -> set:
             log.error('Ошибка при получение всей читаемой манги у манга аккаунта из ДБ', exc_info=error)
             raise
 
-    log.debug(f'Список всей читаемой манги у манга аккаунта = {result}')
     return set(result)

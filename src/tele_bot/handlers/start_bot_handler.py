@@ -8,7 +8,7 @@ from telebot.types import Message
 @bot.message_handler(commands=['start'])
 def start_bot_on_client(message: Message):
     log.info('Старт обработчика команды "start"')
-    log.debug(f'{__name__}(message.from_user.id={message.from_user.id})')
+    log.debug(f'message.from_user.id={message.from_user.id}')
 
     save_telegram_account(message.from_user.id, message.from_user.username,
                           message.from_user.first_name, message.from_user.last_name)

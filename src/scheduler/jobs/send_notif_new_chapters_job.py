@@ -12,10 +12,9 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 from telebot.apihelper import ApiException
 
 
-@scheduler.scheduled_job('interval', minutes=5)
+@scheduler.scheduled_job('interval', minutes=1)
 def send_notif_new_chapters() -> None:
     log.info('Старт джобы на отправку уведомлений о выходе новых глав')
-    log.debug(f'{__name__}')
     releases = get_new_manga_chapters()
 
     for release in releases:
@@ -29,7 +28,7 @@ def send_notif_new_chapters() -> None:
 
 
 def _get_send_data(manga_slug: str) -> list[dict]:
-    log.debug(f'{__name__}, manga_slug={manga_slug} (Получение телеграмм аккаунтов и id обложки манги из ДБ)')
+    log.debug(f'Получение телеграмм аккаунтов и id обложки манги из ДБ | manga_slug={manga_slug}')
     with Session_db() as session:
         try:
             stmt = select(TelegramAccounts.account_id, TrackedManga.cover_id).join(
@@ -44,12 +43,11 @@ def _get_send_data(manga_slug: str) -> list[dict]:
             log.error('Ошибка при получении телеграмм аккаунтов и id обложки манги из ДБ', exc_info=error)
             raise
 
-    log.debug(f'Список телеграмм аккаунтов и id обложки = {result}')
     return result
 
 
 def _get_cover_data(manga_slug: str, cover_id: str) -> bytes:
-    log.debug(f'{__name__} получение обложки манги manga_slug={manga_slug}, send_data={cover_id}')
+    log.debug(f'Получение обложки манги | manga_slug={manga_slug}, send_data={cover_id}')
 
     try:
         response = get(f'https://cover.imglib.info/uploads/cover/{manga_slug}/cover/{cover_id}_250x350.jpg')
@@ -66,7 +64,7 @@ def _get_cover_data(manga_slug: str, cover_id: str) -> bytes:
 
 
 def _get_placeholder_cover() -> bytes:
-    log.debug(f'{__name__}(получение заглушки обложки манга)')
+    log.debug(f'Получение заглушки обложки манга')
     placeholder_path = Path.joinpath(Path.cwd(), r'.\data\images\placeholder_cover.png')
     with open(placeholder_path, 'rb') as fr:
         return fr.read()
@@ -74,7 +72,7 @@ def _get_placeholder_cover() -> bytes:
 
 def _send_release_in_tg(manga_name: str, chap_vol: int, chap_num: float, chap_url: str, cover: bytes,
                         tg_id: int) -> None:
-    log.debug(f'{__name__} отправка сообщения с новой главой manga_name={manga_name}, chap_vol={chap_vol}, '
+    log.debug(f'Отправка сообщения с новой главой | manga_name={manga_name}, chap_vol={chap_vol}, '
               f'chap_num={chap_num}, chap_url={chap_url}, tg_id={tg_id}')
     try:
         bot.send_photo(tg_id, photo=cover, caption=f'{manga_name}\nТом {chap_vol} глава '
