@@ -22,4 +22,4 @@ class Chapter:
 
     def __repr__(self):
         return f'Chapter(chapter_url={self.url}, chapter_volume={self.volume}, ' \
-               f'chapter_number{self.number})'
+               f'chapter_number={self.number})'
