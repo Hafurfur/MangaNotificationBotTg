@@ -12,8 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 
 
 def get_new_manga_chapters() -> list[Manga]:
-    log.info('Старт получение новый глав манги')
-    log.debug(f'{__name__}')
+    log.info('Старт получение новых глав манги')
 
     manga_data_db = _get_manga_data_db()
     soup_data = _get_soup_data()
