@@ -6,14 +6,17 @@ services:
         volumes:
           - type: volume
             source: bot_data
-            target: /app/db
-
-          - type: volume
-            source: bot_data
-            target: /app/.state-save
+            target: /app/data
 
           - type: bind
             source: #указать папку в которой будут хранится логи
             target: /app/logs
+
+        deploy:
+          restart_policy:
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
 volumes:
     bot_data:
