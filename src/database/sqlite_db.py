@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class SqliteDB:
 
-    def __init__(self, db_name: str, db_dir='./db/'):
+    def __init__(self, db_name: str, db_dir='./data/db/'):
         log.debug(f'Создание экземпляра объекта {self.__class__.__name__}')
         log.debug(f'db_name={db_name}, db_dir={db_dir}')
         self.db_dir = db_dir
@@ -32,7 +32,7 @@ class SqliteDB:
         return engine
 
     def _make_db_dir(self) -> None:
-        log.debug(f'{__name__} (создание папки хранения БД)')
+        log.debug(f'Создание папки хранения БД')
         self.db_dir = Path(Path.cwd(), self.db_dir)
 
         try:
