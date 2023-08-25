@@ -2,6 +2,7 @@ from src.database import TrackedManga
 from src.scheduler.jobs.new_chapters.manga import Manga
 from loader import Session_db
 from src.logger.base_logger import log
+from os import getenv
 
 import requests
 from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
@@ -18,6 +19,7 @@ def get_new_manga_chapters() -> list[Manga]:
     soup_data = _get_soup_data()
 
     if not manga_data_db or not soup_data:
+        log.debug('Нет данных манги из ДБ или не получен суп с сайта')
         return []
 
     soup_all_new_releases = soup_data.find_all(class_='updates__item')
@@ -35,15 +37,26 @@ def get_new_manga_chapters() -> list[Manga]:
     if all_new_releases:
         _update_last_mg_chapter_db(all_new_releases)
 
-    log.debug(f'Список новых манг с главами={all_new_releases}')
+    log.debug(f'Список новой манги с главами={all_new_releases}')
     return all_new_releases
 
 
 def _get_soup_data() -> BeautifulSoup | None:
-    log.debug(f'{__name__}(получение супа с https://mangalib.me)')
+    log.debug(f'Получение супа с https://mangalib.me')
 
     try:
-        response = requests.get('https://mangalib.me')
+        if not getenv("REMEMBER_WEB") or not getenv("REMEMBER_WEB_VALUE"):
+            log.error('Не указаны данные куки')
+            return None
+
+        cookies = {
+            getenv("REMEMBER_WEB"): getenv("REMEMBER_WEB_VALUE"),
+            'User-Agent': 'python-requests/2.30.0',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept': '*/*',
+            'Connection': 'keep-alive'}
+
+        response = requests.get('https://mangalib.me', cookies=cookies)
         response.raise_for_status()
     except (HTTPError, ConnectionError, Timeout, RequestException) as error:
         log.error('Ошибка при получении супа для парсинга (requests)', exc_info=error)
@@ -56,7 +69,7 @@ def _get_soup_data() -> BeautifulSoup | None:
 
 
 def _get_manga_data_db() -> dict:
-    log.debug(f'{__name__}(получение манги отслеживаемой манги из БД в виде словаря)')
+    log.debug(f'Получение манги отслеживаемой манги из БД в виде словаря')
 
     with Session_db() as session:
         try:
@@ -76,12 +89,11 @@ def _get_manga_data_db() -> dict:
         manga_data_db[item.get('slug')] = {'last_volume': item.get('last_volume') if item.get('last_volume') else 0,
                                            'last_chapter': item.get('last_chapter') if item.get('last_chapter') else 0}
 
-    log.debug(f'Отслеживаемая манга из ДБ={manga_data_db}')
     return manga_data_db
 
 
 def _update_last_mg_chapter_db(all_new_releases: list[Manga]) -> None:
-    log.debug(f'{__name__} обновление номеров последних глав манги в БД. all_new_releases={all_new_releases}')
+    log.debug(f'Обновление номеров последних глав манги в БД. all_new_releases={all_new_releases}')
     set_data: list = []
 
     for release in all_new_releases:
