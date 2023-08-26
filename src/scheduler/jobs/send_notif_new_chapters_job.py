@@ -22,7 +22,7 @@ def send_notif_new_chapters() -> None:
         send_data = _get_send_data(release.slug)
         cover = _get_cover_data(release.slug, send_data[0].get('cover_id'))
         for data in send_data:
-            for chapter in release.chapters:
+            for chapter in release.chapters[::-1]:
                 _send_release_in_tg(release.name, chapter.volume, chapter.number, chapter.url, cover,
                                     data.get('account_id'))
 
@@ -33,7 +33,7 @@ def _get_send_data(manga_slug: str) -> list[dict]:
         try:
             stmt = select(TelegramAccounts.account_id, TrackedManga.cover_id).join(
                 MangaAccounts.readable_manga).join(MangaAccounts.telegram_accounts).where(
-                TrackedManga.slug == manga_slug)
+                TrackedManga.slug == manga_slug).where(TelegramAccounts.active.is_(True))
             log.debug(f'Запрос = {stmt}')
             result = session.execute(stmt).mappings().all()
         except (SQLAlchemyError, DBAPIError) as error:
@@ -78,6 +78,6 @@ def _send_release_in_tg(manga_name: str, chap_vol: int, chap_num: float, chap_ur
         bot.send_photo(tg_id, photo=cover, caption=f'{manga_name}\nТом {chap_vol} глава '
                                                    f'{int(chap_num) if chap_num % 1 == 0 else chap_num}\n\n{chap_url}')
     except ApiException as error:
-        log.error('Ошибка при отправке фотографии через telebot', exc_info=error)
+        log.error('Ошибка при отправке фотографии (telebot)', exc_info=error)
     except Exception as error:
         log.error('Ошибка при отправке фотографии', exc_info=error)
