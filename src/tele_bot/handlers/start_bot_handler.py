@@ -14,12 +14,12 @@ def start_bot_on_client(message: Message):
     save_telegram_account(message.from_user.id, message.from_user.username,
                           message.from_user.first_name, message.from_user.last_name)
 
-    star_message = f'Добро пожаловать {message.from_user.first_name}!\nС этого момента бот сможет '
-    f'присылать уведомления о выходе новых главах манги с сайта mangalib.\nЧто бы '
-    f'получать уведомления нужно через команду /add_mangalib_account "имя аккаунта" '
-    f'добавить аккаунт с сайта mangalib.\nПри добавлении аккаунта '
-    f'будут приходить уведомления для манги из вкладки "Читаю".\nКак выйдет новая '
-    f'глава бот вам её пришлет.'
+    star_message = (f'Добро пожаловать {message.from_user.first_name}!\nС этого момента бот сможет '
+                    f'присылать уведомления о выходе новых главах манги с сайта mangalib.\nЧто бы '
+                    f'получать уведомления нужно через команду /add_mangalib_account "имя аккаунта" '
+                    f'добавить аккаунт с сайта mangalib.\nПри добавлении аккаунта '
+                    f'будут приходить уведомления для манги из вкладки "Читаю".\nКак выйдет новая '
+                    f'глава бот вам её пришлет.')
 
     try:
         bot.send_message(message.chat.id, text=star_message)
