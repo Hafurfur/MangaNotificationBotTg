@@ -4,3 +4,4 @@ from .add_new_mg_acc_handler import prev_manga_acc
 from .add_new_mg_acc_handler import next_manga_acc
 from .add_new_mg_acc_handler import cancel_search_manga_acc
 from .start_bot_handler import start_bot_on_client
+from .start_bot_handler import help_client_mes
