@@ -4,6 +4,7 @@ from src.scheduler.jobs.new_chapters.new_mg_chapters import get_new_manga_chapte
 from src.database import TrackedManga, MangaAccounts, TelegramAccounts
 from loader import Session_db, bot, scheduler
 from src.logger.base_logger import log
+from time import sleep
 
 from requests import get
 from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
@@ -21,8 +22,11 @@ def send_notif_new_chapters() -> None:
         # Получение телеграмм аккаунта и id обложки манги
         send_data = _get_send_data(release.slug)
         cover = _get_cover_data(release.slug, send_data[0].get('cover_id'))
-        for data in send_data:
-            for chapter in release.chapters[::-1]:
+        for chapter in release.chapters[::-1]:
+            sleep(1)
+            for data, count in enumerate(send_data):
+                if count % 30 == 0:
+                    sleep(1)
                 _send_release_in_tg(release.name, chapter.volume, chapter.number, chapter.url, cover,
                                     data.get('account_id'))
 
