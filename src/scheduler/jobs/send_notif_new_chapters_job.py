@@ -13,7 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 from telebot.apihelper import ApiException
 
 
-@scheduler.scheduled_job('interval', minutes=5)
+@scheduler.scheduled_job('interval', minutes=1)
 def send_notif_new_chapters() -> None:
     log.info('Старт джобы на отправку уведомлений о выходе новых глав')
     releases = get_new_manga_chapters()
@@ -24,7 +24,7 @@ def send_notif_new_chapters() -> None:
         cover = _get_cover_data(release.slug, send_data[0].get('cover_id'))
         for chapter in release.chapters[::-1]:
             sleep(1)
-            for data, count in enumerate(send_data):
+            for count, data in enumerate(send_data, start=1):
                 if count % 30 == 0:
                     sleep(1)
                 _send_release_in_tg(release.name, chapter.volume, chapter.number, chapter.url, cover,
