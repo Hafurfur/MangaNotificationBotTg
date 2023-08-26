@@ -12,7 +12,7 @@ from telebot.apihelper import ApiException
 @bot.message_handler(commands=['add_manga_account'])
 def set_mg_acc(message: Message) -> None:
     log.info('Старт обработчика команды "add_manga_account"')
-    log.debug(f'message.from_user.id={message.from_user.id}')
+    log.debug(f'message.from_user.id={message.from_user.id}, message.chat.id={message.chat.id}')
 
     bot.delete_state(message.chat.id)
     bot.set_state(message.chat.id, 'add_new_mg_acc')
@@ -161,7 +161,7 @@ def _send_manga_account(callback_query: CallbackQuery, len_list_acc: int, acc_id
                        caption=f'[{index + 1} из {len_list_acc}] Имя аккаунта: {acc_name}',
                        reply_markup=search_manga_acc_inline)
     except ApiException as error:
-        log.error('Ошибка при отправке фотографии через telebot', exc_info=error)
+        log.error('Ошибка при отправке фотографии (Telebot)', exc_info=error)
     except Exception as error:
         log.error('Ошибка при отправке фотографии', exc_info=error)
 
