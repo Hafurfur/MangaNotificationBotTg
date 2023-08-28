@@ -51,8 +51,7 @@ def _save_mew_tracked_mg(manga: list) -> None:
 
 
 def _del_readable_mg(del_manga: set, mg_acc_id: int) -> None:
-    log.debug(
-        f'{__name__}, del_manga={del_manga}, mg_acc_id={mg_acc_id} (Удаление читаемой манги у манга аккаунта из БД)')
+    log.debug(f'Удаление читаемой манги у манга аккаунта из БД | del_manga={del_manga}, mg_acc_id={mg_acc_id}')
 
     if not del_manga:
         log.debug('Список удаляемой читаемой манги у аккаунта пуст')
