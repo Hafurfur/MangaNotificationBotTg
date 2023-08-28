@@ -1,3 +1,5 @@
-.*
+*.example
 Dockerfile
+Dockerfile-example
 docker-compose.*
+docker-compose-example.*
