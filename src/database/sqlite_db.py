@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 from pathlib import Path
 from src.logger.base_logger import log
+from os import makedirs
 
 from sqlalchemy import URL, create_engine, Engine
 from sqlalchemy.exc import SQLAlchemyError, DBAPIError
@@ -36,6 +37,6 @@ class SqliteDB:
         self.db_dir = Path(Path.cwd(), self.db_dir)
 
         try:
-            Path.mkdir(self.db_dir, exist_ok=True)
+            makedirs(self.db_dir, exist_ok=True)
         except Exception as error:
             log.debug(f'Ошибка при создании папки хранения ДБ Sqlite', exc_info=error)
