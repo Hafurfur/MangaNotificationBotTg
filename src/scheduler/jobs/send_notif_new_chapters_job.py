@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from src.configs.settings import NOTIF_JOB_INTERVAL
 from src.scheduler.jobs.new_chapters.new_mg_chapters import get_new_manga_chapters
 from src.database import TrackedManga, MangaAccounts, TelegramAccounts
 from loader import Session_db, bot, scheduler
@@ -13,9 +13,9 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 from telebot.apihelper import ApiException
 
 
-@scheduler.scheduled_job('interval', minutes=5)
+@scheduler.scheduled_job('interval', minutes=NOTIF_JOB_INTERVAL)
 def send_notif_new_chapters() -> None:
-    log.info('Старт джобы на отправку уведомлений о выходе новых глав')
+    log.info('Старт задания на отправку уведомлений о выходе новых глав')
     releases = get_new_manga_chapters()
 
     for release in releases:

@@ -1,4 +1,5 @@
 from loader import scheduler, Session_db
+from src.configs.settings import UPD_READABLE_MB_JOB_INTERVAL
 from src.database.models import MangaAccounts, TrackedManga, MgAccountTrackedMgAssociationTable
 from src.tele_bot.bot_back.site_data import get_readable_mg_acc
 from src.logger.base_logger import log
@@ -7,9 +8,9 @@ from sqlalchemy import select, delete, insert
 from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 
 
-@scheduler.scheduled_job('interval', hours=1)
+@scheduler.scheduled_job('interval', hours=UPD_READABLE_MB_JOB_INTERVAL)
 def udp_readable_mg() -> None:
-    log.info('Старт джобы обновления читаемой манги у манга аккаунтов')
+    log.info('Старт задания обновления читаемой манги у манга аккаунтов')
     mg_accounts = _get_mg_acc_db()
 
     for mg_acc in mg_accounts:
