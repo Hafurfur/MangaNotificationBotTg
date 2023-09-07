@@ -13,7 +13,7 @@ class Chapter:
 
     @classmethod
     def chapter_builder(cls, chapter_data: Tag):
-        url: str = chapter_data.attrs.get('href')
+        url: str = chapter_data.attrs.get('href').split('?ui=')[0]
         chapter_number = chapter_data.find(class_='updates__chapter-vol').text.split(' ')
         volume: int = int(chapter_number[1])
         number: float = float(chapter_number[3])
