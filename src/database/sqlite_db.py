@@ -5,6 +5,7 @@ from os import makedirs
 
 from sqlalchemy import URL, create_engine, Engine
 from sqlalchemy.exc import SQLAlchemyError, DBAPIError
+from sqlalchemy.dialects.sqlite import DATETIME
 
 if TYPE_CHECKING:
     from sqlalchemy import Engine
@@ -12,12 +13,14 @@ if TYPE_CHECKING:
 
 class SqliteDB:
 
-    def __init__(self, db_name: str, db_dir='./data/db/'):
-        log.debug(f'Создание экземпляра объекта {self.__class__.__name__}')
+    def __init__(self, db_name: str = None, db_dir: str = './data/db/', truncate_microseconds: bool = False):
+        log.info(f'Создание экземпляра объекта {self.__class__.__name__}')
         log.debug(f'db_name={db_name}, db_dir={db_dir}')
         self.db_dir = db_dir
         self.db_name = 'bot_db.db' if db_name is None else db_name
+        self.truncate_microseconds = truncate_microseconds
         self._make_db_dir()
+        self._datetime_without_microsecond()
 
     def get_engine(self) -> Engine:
         try:
@@ -40,3 +43,7 @@ class SqliteDB:
             makedirs(self.db_dir, exist_ok=True)
         except Exception as error:
             log.debug(f'Ошибка при создании папки хранения ДБ Sqlite', exc_info=error)
+
+    def _datetime_without_microsecond(self) -> None:
+        if self.truncate_microseconds:
+            DATETIME._storage_format = '%(year)04d-%(month)02d-%(day)02d %(hour)02d:%(minute)02d:%(second)02d'
