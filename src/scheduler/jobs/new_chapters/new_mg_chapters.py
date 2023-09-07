@@ -3,6 +3,7 @@ from src.scheduler.jobs.new_chapters.manga import Manga
 from loader import Session_db
 from src.logger.base_logger import log
 from os import getenv
+from datetime import datetime
 
 import requests
 from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
@@ -46,7 +47,7 @@ def _get_soup_data() -> BeautifulSoup | None:
     try:
         if not getenv("REMEMBER_WEB") or not getenv("REMEMBER_WEB_VALUE"):
             log.error('Не указаны данные куки')
-            return None
+            raise
 
         cookies = {
             getenv("REMEMBER_WEB"): getenv("REMEMBER_WEB_VALUE"),
@@ -97,14 +98,12 @@ def _update_last_mg_chapter_db(all_new_releases: list[Manga]) -> None:
 
     for release in all_new_releases:
         data = {'col_slug': release.slug,
+                'update_date': datetime.utcnow(),
                 'last_volume': release.chapters[0].volume,
                 'last_chapter': release.chapters[0].number}
         set_data.append(data)
 
     with Session_db() as session:
-        stmt = update(TrackedManga).where(TrackedManga.slug == bindparam('col_slug'))
-        session.connection().execute(stmt, set_data)
-
         try:
             stmt = update(TrackedManga).where(TrackedManga.slug == bindparam('col_slug'))
 
