@@ -3,11 +3,11 @@ from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
 log = logging.getLogger('log')
-
 try:
     Path.mkdir(Path(Path.cwd(), './logs/'), exist_ok=True)
 except Exception as error:
-    print(f'Ошибка при создании папки логов error={error}')
+    print(f'Ошибка при создании папки логов')
+    raise
 
 rotation_handler = TimedRotatingFileHandler('./logs/log.log', utc=True, when='D')
 stream_handler = logging.StreamHandler()
