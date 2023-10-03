@@ -103,18 +103,20 @@ def _check_new_chapters(release, tracked_manga_db) -> bool:
 def _create_mg_obj(release, tracked_manga_db) -> Manga:
     log.debug('Создание манги c новыми главами')
 
-    chapters: list[Chapter] = []
     name = release.find(class_='link-default').text
     slug = release.find(class_='link-default').attrs.get('href').split('/')[-1]
     all_new_chapters_soup = release.find_all(class_='updates__chapter')
+    chapters: list[Chapter] = []
 
     for chapter in all_new_chapters_soup:
-        url = chapter.attrs.get('href').split('&ui')[0].split('?ui')[0]
         chapter_number = chapter.find(class_='updates__chapter-vol').text.split(' ')
         volume = int(chapter_number[1])
         number = float(chapter_number[3])
+        url = chapter.attrs.get('href').split('&ui')[0].split('?ui')[0]
 
-        chapters.append(Chapter(url=url, volume=volume, number=number))
+        if number > tracked_manga_db[slug].get('last_chapter') and volume >= tracked_manga_db[slug].get('last_volume'):
+            chapters.append(Chapter(url=url, volume=volume, number=number))
+
     result = Manga(id=tracked_manga_db[slug].get('id'), name=name, slug=slug, chapters=chapters)
 
     return result
