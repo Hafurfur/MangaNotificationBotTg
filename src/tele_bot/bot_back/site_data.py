@@ -28,7 +28,7 @@ def get_photo_account(acc_id: str, photo_id: str) -> bytes:
 def _get_placeholder_avatar() -> bytes:
     log.debug(f'Получение заглушки аватара манга аккаунта')
 
-    placeholder_path = Path.joinpath(Path.cwd(), r'.\data\images\placeholder_avatar.png')
+    placeholder_path = Path.joinpath(Path.cwd(), r'.\pr_data\images\placeholder_avatar.png')
     with open(placeholder_path, 'rb') as fr:
         return fr.read()
 
@@ -70,12 +70,12 @@ def search_account(row_name: str) -> dict:
     return result
 
 
-def get_readable_mg_acc(account_id: int) -> tuple[list, set, int]:
+def get_readable_mg_acc(manga_acc_id: int) -> tuple[list, set, int]:
     log.info('Получение читаемой манги аккаунта с сайта')
-    log.debug(f'account_id={account_id}')
+    log.debug(f'id={manga_acc_id}')
 
     try:
-        response = get(f'http://mangalib.me/bookmark/{account_id}')
+        response = get(f'http://mangalib.me/bookmark/{manga_acc_id}')
         response.raise_for_status()
     except (HTTPError, ConnectionError, Timeout, RequestException) as error:
         log.error('Ошибка при получении читаемой манги аккаунта с сайта (requests)', exc_info=error)
@@ -84,13 +84,13 @@ def get_readable_mg_acc(account_id: int) -> tuple[list, set, int]:
         log.error('Ошибка при получении читаемой манги аккаунта с сайта', exc_info=error)
         return [], set(), 404
 
-    manga_list = response.json()['items']
-    manga_id = set()
+    readable_mg_acc_site = response.json()['items']
+    readable_mg_id_site = set()
     readable_manga = []
 
-    for item in manga_list:
-        if item['status'] == 1 and item['manga_id'] not in manga_id:
-            manga_id.add(item['manga_id'])
+    for item in readable_mg_acc_site:
+        if item.get('status') == 1 and item.get('manga_id') not in readable_mg_id_site:
+            readable_mg_id_site.add(item.get('manga_id'))
             readable_manga.append(item)
 
-    return readable_manga, manga_id, response.status_code
+    return readable_manga, readable_mg_id_site, response.status_code
