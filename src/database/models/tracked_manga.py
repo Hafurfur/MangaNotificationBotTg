@@ -1,29 +1,18 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-from .base import Base
+from src.database.base_db_controller import BaseDBController
 
-from sqlalchemy import DateTime, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-if TYPE_CHECKING:
-    from .manga_accounts import MangaAccounts
+from sqlalchemy import DateTime, func, Column, Table, Integer, String
 
 
-class TrackedManga(Base):
-    __tablename__ = 'tracked_manga'
+tracked_manga = Table(
+    'tracked_manga',
+    BaseDBController.metadata_obj,
+    Column('id', Integer, primary_key=True, autoincrement=False),
+    Column('create_date', DateTime, nullable=False, server_default=func.now()),
+    Column('update_date', DateTime, nullable=False, server_default=func.now()),
+    Column('slug', String, nullable=False, unique=True),
+    Column('name_rus', String, nullable=False),
+    Column('cover_id', String, nullable=False),
+    Column('last_volume', Integer, nullable=True),
+    Column('last_chapter', Integer, nullable=True)
 
-    manga_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
-    create_date: Mapped[DateTime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    update_date: Mapped[DateTime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
-    slug: Mapped[str] = mapped_column(nullable=False, unique=True)
-    name_rus: Mapped[str] = mapped_column(nullable=False)
-    cover_id: Mapped[str] = mapped_column(nullable=False)
-    last_volume: Mapped[int] = mapped_column(nullable=True)
-    last_chapter: Mapped[float] = mapped_column(nullable=True)
-
-    manga_accounts: Mapped[list[MangaAccounts]] = relationship(secondary='mg_acc_tr_mg_assoc',
-                                                               back_populates='readable_manga')
-
-    def __str__(self):
-        return f'TrackedManga(manga_id={self.manga_id}, create_date={self.create_date}, ' \
-               f'update_date={self.update_date}, slug={self.slug}, name_rus={self.name_rus}, cover_id={self.cover_id})'
+)
