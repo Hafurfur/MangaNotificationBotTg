@@ -1,24 +1,17 @@
-from src.database import TelegramAccounts
-from loader import Session_db
+from datetime import datetime
+from src.database import telegram_accounts
+from loader import db
 from src.logger.base_logger import log
 
-from sqlalchemy import update, func
-from sqlalchemy.exc import SQLAlchemyError, DBAPIError
+from sqlalchemy import update
 
 
 def switch_notification(status: str, tg_acc_id: int) -> None:
     log.info('Включение/выключение отправки уведомлений')
     log.debug(f'status={status}, tg_acc_id={tg_acc_id}')
 
-    with Session_db() as session:
-        try:
-            stmt = update(TelegramAccounts).values(active=True if status == 'ON' else False,
-                                                   update_date=func.now()).where(
-                TelegramAccounts.account_id == tg_acc_id)
-            log.debug(f'Запрос={stmt}')
-            session.execute(stmt)
-            session.commit()
-        except (SQLAlchemyError, DBAPIError) as error:
-            log.error('Ошибка при включение/выключение отправки уведомлений в БД (SQLAlchemy)', exc_info=error)
-        except Exception as error:
-            log.error('Ошибка при включение/выключение отправки уведомлений в БД', exc_info=error)
+    upd_date = {'active': True if status == 'ON' else False,
+                'update_date': datetime.utcnow()}
+
+    stmt = update(telegram_accounts).where(telegram_accounts.c.id == tg_acc_id)
+    db.update(stmt, upd_date)
